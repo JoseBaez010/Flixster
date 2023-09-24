@@ -36,7 +36,7 @@ The following **additional** features are implemented:
     
 ## Notes
 
-Figuring out which connections goes where what was challenging but after learning it. It has become way easier now.
+Figuring out which connections go where was challenging but I figured it out and know how to use it well.
 
 ## License
 
