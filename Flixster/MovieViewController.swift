@@ -6,17 +6,14 @@
 //
 
 import UIKit
-import ProcessInfo
+import Foundation
 
-let environmentVariables = ProcessInfo.processInfo.environment
-
-let apiKey = environmentVariables["MOVIE_KEY"]
+let apiKey = ProcessInfo.processInfo.environment["api_key"]
 
 class MovieViewController: UIViewController, UITableViewDataSource {
     
     
     @IBOutlet weak var tableView: UITableView!
-    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return movies.count
@@ -40,8 +37,7 @@ class MovieViewController: UIViewController, UITableViewDataSource {
         tableView.dataSource = self
         print(movieID)
         
-        var url = URLRequest(url: URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=
-        \(apiKey)")!)
+        var url = URLRequest(url: URL(string: "https://api.themoviedb.org/3/movie/now_playing?api_key=\(apiKey)")!)
         // Create a URL for the request
         if movieID != 0{
             // Use the URL to instantiate a request
@@ -54,41 +50,42 @@ class MovieViewController: UIViewController, UITableViewDataSource {
         // The data task method attempts to retrieve the contents of a URL based on the specified URL.
         // When finished, it calls it's completion handler (closure) passing in optional values for data (the data we want to fetch), response (info about the response like status code) and error (if the request was unsuccessful)
         let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
-
+            
             // Handle any errors
             if let error = error {
                 print("❌ Network error: \(error.localizedDescription)")
             }
-
+            
             // Make sure we have data
             guard let data = data else {
                 print("❌ Data is nil")
                 return
             }
-
+            
+            print(String(data: data, encoding: .utf8) ?? "Invalid data")
+                            
             // The `JSONSerialization.jsonObject(with: data)` method is a "throwing" function (meaning it can throw an error) so we wrap it in a `do` `catch`
             // We cast the resultant returned object to a dictionary with a `String` key, `Any` value pair.
             do {
                 //Create a JSON Decoder
                 let decoder = JSONDecoder()
-                    
+                
                 let response = try decoder.decode(MoviesResponse.self, from: data)
                 
                 let movies = response.results
                 
                 DispatchQueue.main.async {
-
+                    
                     // Set the view controller's tracks property as this is the one the table view references
                     self?.movies = movies
-
+                    
                     // Make the table view reload now that we have new data
                     self?.tableView.reloadData()
-                 }
+                }
             } catch {
-                print("❌ Error parsing JSON: \(error.localizedDescription)")
+            print("❌ Error parsing JSON: \(error.localizedDescription)")
             }
         }
-
         // Initiate the network request
         task.resume()
     }
