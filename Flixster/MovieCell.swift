@@ -23,11 +23,11 @@ class MovieCell: UITableViewCell {
     }
     
     func configure(with movie: Movie) {
-        movieTitle.text = movie.movieName
-        movieDescrip.text = movie.movieDescript
-
+        movieTitle.text = movie.title
+        movieDescrip.text = movie.overview
+        
         // Load image async via Nuke library image loading helper method
-        Nuke.loadImage(with: movie.moviePoster, into: movieImage)
+        Nuke.loadImage(with: URL(string: "https://image.tmdb.org/t/p/w500/\(movie.poster_path)")!, into: movieImage)
     }
 
 }
